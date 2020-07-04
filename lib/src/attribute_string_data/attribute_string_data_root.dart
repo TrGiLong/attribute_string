@@ -1,7 +1,10 @@
 import '../attribute.dart';
+import 'attribute_string_data.dart';
 import 'attribute_string_data_paragraph.dart';
 
-class AttributeStringDataRoot {
+typedef Transformation<T> = T Function(AttributeStringData attributeStringData);
+
+class AttributeStringDataRoot extends AttributeStringData {
   List<AttributeStringDataParagraph> paragraphs = [];
 
   AttributeStringDataRoot(String text) {
@@ -31,5 +34,9 @@ class AttributeStringDataRoot {
 
       count += paragraph.length;
     }
+  }
+
+  T transform<T>(Transformation<T> transformation) {
+    return transformation(this);
   }
 }

@@ -1,8 +1,9 @@
 import '../attribute.dart';
+import 'attribute_string_data.dart';
 import 'attribute_string_data_node.dart';
 import 'attribute_string_data_root.dart';
 
-class AttributeStringDataParagraph {
+class AttributeStringDataParagraph extends AttributeStringData {
   AttributeStringDataRoot root;
   int length;
   List<AttributeStringDataNode> nodes = [];
@@ -56,5 +57,9 @@ class AttributeStringDataParagraph {
       }
       count += node.text.length;
     }
+  }
+
+  T transform<T>(Transformation<T> transformation) {
+    return transformation(this);
   }
 }

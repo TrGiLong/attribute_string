@@ -6,7 +6,7 @@ import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data
 import '../attribute_string.dart';
 
 extension RichTextTextSpanBuilder on AttributeString {
-  TextSpan build({TextStyle baseStyle}) {
+  TextSpan toTextSpan({TextStyle baseStyle}) {
     AttributeStringDataRoot root = AttributeStringDataRoot(this.text);
     for (var style in this.attributes) {
       root.apply(style);

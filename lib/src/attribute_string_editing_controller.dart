@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rich_text_editor/src/attribute_string.dart';
-import 'package:rich_text_editor/src/attribute_string_span_builder/attribute_string_span_builder.dart';
+import 'package:rich_text_editor/src/text_span/text_span.dart';
 
 class AttributeStringEditingController extends TextEditingController {
   AttributeStringEditingController() : super() {
@@ -22,8 +22,7 @@ class AttributeStringEditingController extends TextEditingController {
 
   @override
   TextSpan buildTextSpan({TextStyle style, bool withComposing}) {
-    print('object');
-    var textSpan = attributeString.build(baseStyle: style);
+    var textSpan = attributeString.toTextSpan(baseStyle: style);
     return textSpan;
   }
 }

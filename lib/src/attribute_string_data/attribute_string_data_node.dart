@@ -1,7 +1,10 @@
+import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data.dart';
+
 import '../attribute.dart';
 import 'attribute_string_data_paragraph.dart';
+import 'attribute_string_data_root.dart';
 
-class AttributeStringDataNode {
+class AttributeStringDataNode extends AttributeStringData {
   AttributeStringDataParagraph paragraph;
 
   AttributeStringDataNode(AttributeStringDataParagraph paragraph, String text) {
@@ -30,4 +33,7 @@ class AttributeStringDataNode {
     this.paragraph.nodes.insert(index, newNode);
   }
 
+  T transform<T>(Transformation<T> transformation) {
+    return transformation(this);
+  }
 }
