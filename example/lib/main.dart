@@ -32,38 +32,71 @@ class _MyHomePageState extends State<MyHomePage> {
   AttributeStringEditingController controller = AttributeStringEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    controller.addListener(() {
+      setState(() {});
+    });
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: RichTextEditor(
-              controller: controller,
-            )),
-            Row(
-              children: <Widget>[
-                FlatButton(
-                  child: Text("Underline"),
-                  onPressed: () {
-                    controller.apply(
-                        AttributeString.Underline, null, controller.selection.start, controller.selection.end);
-                  },
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: controller,
+                  maxLines: 999,
                 ),
-                FlatButton(
-                  child: Text("Bold"),
-                  onPressed: () {
-                    setState(() {
-                      controller.apply(
-                          AttributeString.Bold, null, controller.selection.start, controller.selection.end);
-                    });
-                  },
-                )
-              ],
-            )
-          ],
+              )),
+              Text(AttributeStringDataRoot.from(controller.attributeString).toString()),
+              Row(
+                children: <Widget>[
+                  FlatButton(
+                    child: Text("Underline"),
+                    onPressed: () {
+                      setState(() {
+                        if (controller.selection.start == controller.selection.end) {
+                          var currentAttributes = controller.attributeString.attributesAt(controller.selection.start);
+                          var isExist = false;
+                          currentAttributes.forEach((element) { if (element.key == AttributeString.Underline) isExist = true});
+                          if (isExist) {
+
+                          } else {
+                            controller.apply(
+                                AttributeString.Underline, null, controller.selection.start, controller.selection.end);
+                          }
+                        } else {
+                          controller.apply(
+                              AttributeString.Underline, null, controller.selection.start, controller.selection.end);
+                        }
+
+
+                      });
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Bold"),
+                    onPressed: () {
+                      setState(() {
+                        controller.apply(
+                            AttributeString.Bold, null, controller.selection.start, controller.selection.end);
+                      });
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
         ));
   }
 

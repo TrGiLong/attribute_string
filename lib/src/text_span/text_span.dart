@@ -1,9 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rich_text_editor/rich_text_editor.dart';
+import 'package:rich_text_editor/src/attribute.dart';
 import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_node.dart';
 import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_paragraph.dart';
 import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_root.dart';
-
-import '../attribute_string.dart';
 
 extension RichTextTextSpanBuilder on AttributeString {
   TextSpan toTextSpan({TextStyle baseStyle}) {
@@ -30,11 +31,12 @@ extension _AttributeStringParagraphBuilder on AttributeStringDataParagraph {
 typedef StyleBuilder(value);
 
 Map<String, StyleBuilder> _styles = {
-  AttributeString.Bold: (value) => TextStyle(fontWeight: FontWeight.bold),
-  AttributeString.Italic: (value) => TextStyle(fontStyle: FontStyle.italic),
-  AttributeString.Underline: (value) => TextStyle(decoration: TextDecoration.underline),
-  AttributeString.Size: (value) => TextStyle(fontSize: value),
-  AttributeString.Font: (value) => TextStyle(fontFamily: value),
+  Attribute.Bold: (value) => TextStyle(fontWeight: FontWeight.bold),
+  Attribute.Italic: (value) => TextStyle(fontStyle: FontStyle.italic),
+  Attribute.Underline: (value) => TextStyle(decoration: TextDecoration.underline),
+  Attribute.Size: (value) => TextStyle(fontSize: value),
+  Attribute.Font: (value) => TextStyle(fontFamily: value),
+  Attribute.Link: (value) => TextStyle(),
 };
 
 extension _AttributeStringNodeBuilder on AttributeStringDataNode {
@@ -46,6 +48,9 @@ extension _AttributeStringNodeBuilder on AttributeStringDataNode {
       mergedStyle = mergedStyle.merge(style);
     }
 
-    return TextSpan(text: this.text, style: mergedStyle);
+    return TextSpan(
+        text: this.text,
+        style: mergedStyle,
+        recognizer: _styles.containsKey(Attribute.Link) ? TapGestureRecognizer() : null);
   }
 }

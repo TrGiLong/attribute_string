@@ -5,14 +5,26 @@ import 'package:rich_text_editor/src/text_span/text_span.dart';
 class AttributeStringEditingController extends TextEditingController {
   AttributeStringEditingController() : super() {
     this.addListener(() => this._textChanged());
-    lastSelection = this.selection;
   }
 
   AttributeString attributeString = AttributeString();
 
   TextSelection lastSelection;
+
   void _textChanged() {
-    attributeString.text = this.text;
+    if (this.lastSelection == null) {
+      attributeString.text = this.text;
+      lastSelection = this.selection;
+      print('object');
+      return;
+    }
+
+    print(text);
+    print(lastSelection);
+    print(this.selection);
+    print('=========');
+
+    attributeString.setText(this.text, lastSelection, this.selection);
     lastSelection = this.selection;
   }
 
@@ -25,4 +37,5 @@ class AttributeStringEditingController extends TextEditingController {
     var textSpan = attributeString.toTextSpan(baseStyle: style);
     return textSpan;
   }
+
 }
