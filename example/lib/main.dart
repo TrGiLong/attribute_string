@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:rich_text_editor/rich_text_editor.dart';
 
@@ -58,38 +60,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   maxLines: 999,
                 ),
               )),
-              Text(AttributeStringDataRoot.from(controller.attributeString).toString()),
+              SelectableText(controller.attributeString.toJsonTree()),
               Row(
                 children: <Widget>[
                   FlatButton(
                     child: Text("Underline"),
                     onPressed: () {
                       setState(() {
-                        if (controller.selection.start == controller.selection.end) {
-                          var currentAttributes = controller.attributeString.attributesAt(controller.selection.start);
-                          var isExist = false;
-                          currentAttributes.forEach((element) { if (element.key == AttributeString.Underline) isExist = true});
-                          if (isExist) {
-
-                          } else {
-                            controller.apply(
-                                AttributeString.Underline, null, controller.selection.start, controller.selection.end);
-                          }
-                        } else {
+                        setState(() {
                           controller.apply(
-                              AttributeString.Underline, null, controller.selection.start, controller.selection.end);
-                        }
-
+                              Attribute.Underline, null, controller.selection.start, controller.selection.end);
+                        });
 
                       });
                     },
                   ),
                   FlatButton(
-                    child: Text("Bold"),
+                    child: Text("Strikethrough"),
                     onPressed: () {
                       setState(() {
                         controller.apply(
-                            AttributeString.Bold, null, controller.selection.start, controller.selection.end);
+                            Attribute.Strikethrough, null, controller.selection.start, controller.selection.end);
                       });
                     },
                   )

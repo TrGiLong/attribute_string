@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rich_text_editor/rich_text_editor.dart';
 import 'package:rich_text_editor/src/attribute.dart';
@@ -6,7 +5,7 @@ import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data
 import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_paragraph.dart';
 import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_root.dart';
 
-extension RichTextTextSpanBuilder on AttributeString {
+extension AttributeStringToTextSpan on AttributeString {
   TextSpan toTextSpan({TextStyle baseStyle}) {
     AttributeStringDataRoot root = AttributeStringDataRoot(this.text);
     for (var style in this.attributes) {
@@ -36,7 +35,9 @@ Map<String, StyleBuilder> _styles = {
   Attribute.Underline: (value) => TextStyle(decoration: TextDecoration.underline),
   Attribute.Size: (value) => TextStyle(fontSize: value),
   Attribute.Font: (value) => TextStyle(fontFamily: value),
-  Attribute.Link: (value) => TextStyle(),
+  Attribute.Link: (value) => TextStyle(color: Colors.blue),
+  Attribute.Color: (value) => TextStyle(color: value),
+  Attribute.Strikethrough: (value) => TextStyle(decoration: TextDecoration.lineThrough),
 };
 
 extension _AttributeStringNodeBuilder on AttributeStringDataNode {
@@ -48,9 +49,12 @@ extension _AttributeStringNodeBuilder on AttributeStringDataNode {
       mergedStyle = mergedStyle.merge(style);
     }
 
-    return TextSpan(
-        text: this.text,
-        style: mergedStyle,
-        recognizer: _styles.containsKey(Attribute.Link) ? TapGestureRecognizer() : null);
+    if (this.styles.keys.contains(Attribute.Strikethrough) && this.styles.keys.contains(Attribute.Underline)) {
+      // Special case
+      mergedStyle = mergedStyle
+          .merge(TextStyle(decoration: TextDecoration.combine([TextDecoration.lineThrough, TextDecoration.underline])));
+    }
+
+    return TextSpan(text: this.text, style: mergedStyle);
   }
 }

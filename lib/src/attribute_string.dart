@@ -1,9 +1,7 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rich_text_editor/src/attribute.dart';
 
 class AttributeString {
-
   String text;
   List<Attribute> attributes;
 
@@ -90,10 +88,46 @@ class AttributeString {
 
   void apply(String key, String value, int start, int end) {
     attributes.add(Attribute(key, value, start, end));
+    clear();
+  }
+
+  void clear() {
+    List<Attribute> removeList = [];
+    for (var attribute in attributes) {
+      for (var another in attributes) {
+        if (attribute == another) continue;
+        if (attribute.key != another.key) continue;
+        if (attribute.end == another.start) {
+          removeList.add(another);
+          attribute.end = another.start;
+        }
+        if (another.start <= attribute.start && attribute.end <= another.end) {
+          removeList.add(attribute);
+        }
+      }
+    }
+
+    print(removeList);
+    attributes.removeWhere((element) => removeList.contains(element));
   }
 
   List<Attribute> attributesAt(int at) {
     return attributes.where((element) => element.start <= at && at <= element.end).toList();
+  }
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'attributes': attributes,
+      };
+
+  AttributeString.fromJson(Map<String, dynamic> json) {
+    fromMap(json);
+  }
+
+  fromMap(Map<String, dynamic> json) {
+    text = json['text'];
+    attributes = json['value'];
+    return this;
   }
 }
 

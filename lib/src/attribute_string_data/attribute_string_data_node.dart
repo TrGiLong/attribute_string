@@ -26,8 +26,14 @@ class AttributeStringDataNode extends AttributeStringData {
 
     var newNode = AttributeStringDataNode(this.paragraph, this.text.substring(0, at));
     newNode.styles = Map.from(this.styles);
+    newNode.styles.forEach((key, value) {
+      value.end = newNode.text.length;
+    });
 
     this.text = this.text.substring(at, this.text.length);
+    this.styles.forEach((key, value) {
+      value.end = this.text.length;
+    });
 
     var index = this.paragraph.nodes.indexOf(this);
     this.paragraph.nodes.insert(index, newNode);

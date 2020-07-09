@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rich_text_editor/src/attribute_string.dart';
-import 'package:rich_text_editor/src/text_span/text_span.dart';
+import 'package:rich_text_editor/src/convert/text_span.dart';
 
 class AttributeStringEditingController extends TextEditingController {
   AttributeStringEditingController() : super() {

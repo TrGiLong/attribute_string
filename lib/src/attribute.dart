@@ -1,11 +1,30 @@
 class Attribute {
   String key;
-  String value;
+  String value = "";
 
   int start;
   int end;
 
   Attribute(this.key, this.value, this.start, this.end);
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'value': value,
+        'start': start,
+        'end': end,
+      };
+
+  Attribute.fromJson(Map<String, dynamic> json) {
+    fromMap(json);
+  }
+
+  fromMap(Map<String, dynamic> json) {
+    key = json['key'];
+    value = json['value'];
+    start = json['start'];
+    end = json['end'];
+    return this;
+  }
 
   @override
   String toString() {
@@ -30,9 +49,6 @@ class Attribute {
   static const String Size = "size";
   static const String Font = "font";
   static const String Link = "link";
-}
-
-class AttributeBold extends Attribute {
-  AttributeBold(String key, String value, int start, int end) : super(key, value, start, end);
-  
+  static const String Color = "color";
+  static const String Strikethrough = "strikethrough";
 }
