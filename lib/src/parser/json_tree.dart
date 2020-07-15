@@ -1,4 +1,4 @@
-//import 'package:rich_text_editor/rich_text_editor.dart';
+//import 'package:attribute_string/attribute_string.dart';
 //
 //class AttributeStringJsonTreeParser {
 //  static AttributeString parse(Map<String, dynamic> json) {

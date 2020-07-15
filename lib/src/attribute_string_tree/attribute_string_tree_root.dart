@@ -1,18 +1,18 @@
-import 'package:rich_text_editor/rich_text_editor.dart';
+import 'package:attribute_string/attribute_string.dart';
 
 import '../attribute.dart';
-import 'attribute_string_data.dart';
-import 'attribute_string_data_paragraph.dart';
+import 'attribute_string_tree.dart';
+import 'attribute_string_tree_paragraph.dart';
 
-typedef Transformation<T> = T Function(AttributeStringData attributeStringData);
+typedef Transformation<T> = T Function(AttributeStringTree attributeStringData);
 
-class AttributeStringDataRoot extends AttributeStringData {
-  List<AttributeStringDataParagraph> paragraphs = [];
+class AttributeStringTreeRoot extends AttributeStringTree {
+  List<AttributeStringTreeParagraph> paragraphs = [];
 
 
   
-  factory AttributeStringDataRoot.from(AttributeString attributeString) {
-    var root = AttributeStringDataRoot(attributeString.text);
+  factory AttributeStringTreeRoot.from(AttributeString attributeString) {
+    var root = AttributeStringTreeRoot(attributeString.text);
     
     for (var attribute in attributeString.attributes) {
       root.apply(attribute);
@@ -21,14 +21,18 @@ class AttributeStringDataRoot extends AttributeStringData {
     return root;
   }
 
-  AttributeStringDataRoot(String text) {
+  AttributeStringTreeRoot(String text) {
+    if (text.length == 0) {
+      return;
+    }
+
     List<String> split = text.split('\n');
     for (int x = 0; x < split.length; x++) {
       var substring = split[x];
       if (x < split.length - 1)
         substring += '\n';
 
-      paragraphs.add(AttributeStringDataParagraph(this, substring));
+      paragraphs.add(AttributeStringTreeParagraph(this, substring));
     }
   }
 

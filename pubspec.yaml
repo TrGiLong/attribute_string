@@ -1,4 +1,4 @@
-name: rich_text_editor
+name: attribute_string
 description: A new Flutter package.
 version: 0.0.1
 author:
@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
 
   basic_utils: ^2.5.4
+  html: ^0.14.0+3
 
 dev_dependencies:
   flutter_test:

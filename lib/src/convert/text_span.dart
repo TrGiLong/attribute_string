@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:rich_text_editor/rich_text_editor.dart';
-import 'package:rich_text_editor/src/attribute.dart';
-import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_node.dart';
-import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_paragraph.dart';
-import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data_root.dart';
+import 'package:attribute_string/attribute_string.dart';
+import 'package:attribute_string/src/attribute.dart';
+import 'package:attribute_string/src/attribute_string_tree/attribute_string_tree_node.dart';
+import 'package:attribute_string/src/attribute_string_tree/attribute_string_tree_paragraph.dart';
+import 'package:attribute_string/src/attribute_string_tree/attribute_string_tree_root.dart';
 
 extension AttributeStringToTextSpan on AttributeString {
   TextSpan toTextSpan({TextStyle baseStyle}) {
-    AttributeStringDataRoot root = AttributeStringDataRoot(this.text);
+    AttributeStringTreeRoot root = AttributeStringTreeRoot(this.text);
     for (var style in this.attributes) {
       root.apply(style);
     }
@@ -15,13 +15,13 @@ extension AttributeStringToTextSpan on AttributeString {
   }
 }
 
-extension _AttributeStringRootBuilder on AttributeStringDataRoot {
+extension _AttributeStringRootBuilder on AttributeStringTreeRoot {
   TextSpan build({TextStyle baseStyle}) {
     return TextSpan(children: this.paragraphs.map((p) => p.build(baseStyle: baseStyle)).toList(growable: false));
   }
 }
 
-extension _AttributeStringParagraphBuilder on AttributeStringDataParagraph {
+extension _AttributeStringParagraphBuilder on AttributeStringTreeParagraph {
   TextSpan build({TextStyle baseStyle}) {
     return TextSpan(children: this.nodes.map((node) => node.build(baseStyle: baseStyle)).toList(growable: false));
   }
@@ -40,7 +40,7 @@ Map<String, StyleBuilder> _styles = {
   Attribute.Strikethrough: (value) => TextStyle(decoration: TextDecoration.lineThrough),
 };
 
-extension _AttributeStringNodeBuilder on AttributeStringDataNode {
+extension _AttributeStringNodeBuilder on AttributeStringTreeNode {
   TextSpan build({TextStyle baseStyle}) {
     var styles = this.styles.values.map((style) => _styles[style.key](style.value));
 

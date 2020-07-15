@@ -1,7 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:rich_text_editor/rich_text_editor.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:attribute_string/attribute_string.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,6 +37,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    setState(() {
+      var result = HTMLParser.parse('<p>abc</p><p>def Montag <b>Montag Dienstag criti</b></p><p><b>drfgsfd </b><span style="text-decoration:line-through"><b>fsdds</b></span><b> das </b></p>');
+      controller.attributeString = result;
+    });
+
+
     controller.addListener(() {
       setState(() {});
     });
@@ -45,6 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -60,16 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   maxLines: 999,
                 ),
               )),
-              SelectableText(controller.attributeString.toJsonTree()),
+              SelectableText(controller.attributeString.toHtml()),
+              HtmlWidget(controller.attributeString.toHtml(),),
               Row(
                 children: <Widget>[
                   FlatButton(
-                    child: Text("Underline"),
+                    child: Text("Bold"),
                     onPressed: () {
                       setState(() {
                         setState(() {
                           controller.apply(
-                              Attribute.Underline, null, controller.selection.start, controller.selection.end);
+                              Attribute.Bold, null, controller.selection.start, controller.selection.end);
                         });
 
                       });

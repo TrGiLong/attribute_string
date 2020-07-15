@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:rich_text_editor/src/attribute_string.dart';
-import 'package:rich_text_editor/src/convert/text_span.dart';
+import 'package:attribute_string/src/attribute_string.dart';
+import 'package:attribute_string/src/convert/text_span.dart';
 
 class AttributeStringEditingController extends TextEditingController {
   AttributeStringEditingController() : super() {
     this.addListener(() => this._textChanged());
   }
 
-  AttributeString attributeString = AttributeString();
+  AttributeString _attributeString = AttributeString();
 
-  TextSelection lastSelection;
+  AttributeString get attributeString => _attributeString;
+
+  set attributeString(AttributeString value) {
+    _attributeString = value;
+    this.text = _attributeString.text;
+  }
+
+  TextSelection _lastSelection;
 
   void _textChanged() {
-    if (this.lastSelection == null) {
-      attributeString.text = this.text;
-      lastSelection = this.selection;
-      print('object');
+    if (this._lastSelection == null) {
+      _attributeString.text = this.text;
+      _lastSelection = this.selection;
       return;
     }
 
-    print(text);
-    print(lastSelection);
-    print(this.selection);
-    print('=========');
-
-    attributeString.setText(this.text, lastSelection, this.selection);
-    lastSelection = this.selection;
+    _attributeString.setText(this.text, _lastSelection, this.selection);
+    _lastSelection = this.selection;
   }
 
   void apply(String key, value, int start, int end) {
@@ -37,5 +38,4 @@ class AttributeStringEditingController extends TextEditingController {
     var textSpan = attributeString.toTextSpan(baseStyle: style);
     return textSpan;
   }
-
 }

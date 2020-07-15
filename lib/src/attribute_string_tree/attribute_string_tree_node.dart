@@ -1,13 +1,13 @@
-import 'package:rich_text_editor/src/attribute_string_data/attribute_string_data.dart';
+import 'package:attribute_string/attribute_string.dart';
 
-import '../attribute.dart';
-import 'attribute_string_data_paragraph.dart';
-import 'attribute_string_data_root.dart';
+import 'attribute_string_tree.dart';
+import 'attribute_string_tree_paragraph.dart';
+import 'attribute_string_tree_root.dart';
 
-class AttributeStringDataNode extends AttributeStringData {
-  AttributeStringDataParagraph paragraph;
+class AttributeStringTreeNode extends AttributeStringTree {
+  AttributeStringTreeParagraph paragraph;
 
-  AttributeStringDataNode(AttributeStringDataParagraph paragraph, String text) {
+  AttributeStringTreeNode(AttributeStringTreeParagraph paragraph, String text) {
     this.paragraph = paragraph;
     this.text = text;
   }
@@ -24,7 +24,7 @@ class AttributeStringDataNode extends AttributeStringData {
   void split(int at) {
     if (at == 0 || at == this.text.length) return;
 
-    var newNode = AttributeStringDataNode(this.paragraph, this.text.substring(0, at));
+    var newNode = AttributeStringTreeNode(this.paragraph, this.text.substring(0, at));
     newNode.styles = Map.from(this.styles);
     newNode.styles.forEach((key, value) {
       value.end = newNode.text.length;

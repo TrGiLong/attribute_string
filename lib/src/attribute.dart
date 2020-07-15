@@ -28,7 +28,7 @@ class Attribute {
 
   @override
   String toString() {
-    return "$key: $value";
+    return "$key: $value [$start:$end]";
   }
 
   bool containIndex(int index) {

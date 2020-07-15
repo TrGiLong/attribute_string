@@ -1,5 +1,6 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rich_text_editor/src/attribute.dart';
+import 'package:attribute_string/src/attribute.dart';
 
 class AttributeString {
   String text;
@@ -9,25 +10,8 @@ class AttributeString {
     attributes = [];
   }
 
-  void setText(String text, TextSelection oldSelection, TextSelection newSelection) {
-    if (this.text == text) {
-      this.text = text;
-      return;
-    }
-
-    this.text = text;
-
-    if (oldSelection.start != oldSelection.end) {
-      // replace
-      _remove(_RangeProcess(oldSelection.end, oldSelection.start - oldSelection.end));
-      _insert(_RangeProcess(oldSelection.start, newSelection.start - oldSelection.start));
-    } else {
-      // insert
-      _insert(_RangeProcess(oldSelection.start, newSelection.start - oldSelection.start));
-    }
-  }
-
-  void _insert(_RangeProcess process) {
+  /// Update attribute after insert a string.
+  void _insert(_Range process) {
     attributes.forEach((attribute) {
       if (process.start <= attribute.start && attribute.start != attribute.end) {
         attribute.start += process.length;
@@ -38,23 +22,19 @@ class AttributeString {
     });
   }
 
-  void _remove(_RangeProcess process) {
+  /// Update attribute after delete.
+  void _remove(_Range process) {
     List<Attribute> removeList = [];
     attributes.forEach((attribute) {
       if (process.start <= attribute.start) {
-        print('1');
-        print(process.length);
         attribute.start += process.length;
         attribute.end += process.length;
-        print([attribute.start, attribute.end]);
       } else if (attribute.start < process.start && process.start <= attribute.end) {
-        print('2');
         attribute.end += process.length;
         if (attribute.start >= attribute.end) {
           removeList.add(attribute);
         }
       } else if (process.start + process.length < attribute.end) {
-        print('3');
         attribute.end = process.start + process.length;
         if (attribute.start >= attribute.end) {
           removeList.add(attribute);
@@ -65,29 +45,33 @@ class AttributeString {
     attributes.removeWhere((element) => removeList.contains(element));
   }
 
-//  void insert(String otherText, int at) {
-//    text = StringUtils.addCharAtPosition(this.text, otherText, at);
-//
-//    for (var attribute in attributes) {
-//      if (at <= attribute.start) {
-//        attribute.start += otherText.length;
-//        attribute.end += otherText.length;
-//      } else if (attribute.start < at && at < attribute.end) {
-//        attribute.end += otherText.length;
-//      }
-//    }
-//
-//    attributes.removeWhere((attribute) {
-//      return attribute.start > text.length || attribute.start > attribute.end;
-//    });
-//  }
-//
-//  void append(String text) {
-//    this.insert(text, text.length);
-//  }
+  void insert(String otherText, int at) {
+    text = StringUtils.addCharAtPosition(this.text, otherText, at);
+    _insert(_Range(at, otherText.length));
+  }
 
+  void append(String text) {
+    this.insert(text, text.length);
+  }
+
+  void remove(int start, int end) {
+    text.replaceRange(start, end, "");
+    _remove(_Range(start, start - end));
+  }
+
+  /// Add attribute to AttributeString
   void apply(String key, String value, int start, int end) {
-    attributes.add(Attribute(key, value, start, end));
+    this.attributes.add(Attribute(key, value, start, end));
+    clear();
+  }
+
+  void addAttribute(Attribute attribute) {
+    this.attributes.add(attribute);
+    clear();
+  }
+
+  void addAttributes(List<Attribute> attributes) {
+    this.attributes.addAll(attributes);
     clear();
   }
 
@@ -99,15 +83,15 @@ class AttributeString {
         if (attribute.key != another.key) continue;
         if (attribute.end == another.start) {
           removeList.add(another);
-          attribute.end = another.start;
+          attribute.end = another.end;
         }
         if (another.start <= attribute.start && attribute.end <= another.end) {
           removeList.add(attribute);
+          print('object2');
         }
       }
     }
 
-    print(removeList);
     attributes.removeWhere((element) => removeList.contains(element));
   }
 
@@ -131,9 +115,29 @@ class AttributeString {
   }
 }
 
-class _RangeProcess {
+class _Range {
   int start;
   int length;
 
-  _RangeProcess(this.start, this.length);
+  _Range(this.start, this.length);
+}
+
+extension AttributeStringEditable on AttributeString {
+  void setText(String text, TextSelection oldSelection, TextSelection newSelection) {
+    if (this.text == text) {
+      this.text = text;
+      return;
+    }
+
+    this.text = text;
+
+    if (oldSelection.start != oldSelection.end) {
+      // replace
+      _remove(_Range(oldSelection.end, oldSelection.start - oldSelection.end));
+      _insert(_Range(oldSelection.start, newSelection.start - oldSelection.start));
+    } else {
+      // insert
+      _insert(_Range(oldSelection.start, newSelection.start - oldSelection.start));
+    }
+  }
 }

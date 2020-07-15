@@ -1,16 +1,16 @@
 import '../attribute.dart';
-import 'attribute_string_data.dart';
-import 'attribute_string_data_node.dart';
-import 'attribute_string_data_root.dart';
+import 'attribute_string_tree.dart';
+import 'attribute_string_tree_node.dart';
+import 'attribute_string_tree_root.dart';
 
-class AttributeStringDataParagraph extends AttributeStringData {
-  AttributeStringDataRoot root;
+class AttributeStringTreeParagraph extends AttributeStringTree {
+  AttributeStringTreeRoot root;
   int length;
-  List<AttributeStringDataNode> nodes = [];
+  List<AttributeStringTreeNode> nodes = [];
 
-  AttributeStringDataParagraph(AttributeStringDataRoot root, String text) {
+  AttributeStringTreeParagraph(AttributeStringTreeRoot root, String text) {
     length = text.length;
-    nodes.add(AttributeStringDataNode(this, text));
+    nodes.add(AttributeStringTreeNode(this, text));
   }
 
   @override
@@ -22,7 +22,7 @@ class AttributeStringDataParagraph extends AttributeStringData {
     var count = 0;
 
     // Split character at start
-    AttributeStringDataNode startNode;
+    AttributeStringTreeNode startNode;
     for (var node in this.nodes) {
       if (start < count + node.text.length) {
         startNode = node;
@@ -36,7 +36,7 @@ class AttributeStringDataParagraph extends AttributeStringData {
 
     // Split character at end
     count = 0;
-    AttributeStringDataNode endNode;
+    AttributeStringTreeNode endNode;
     for (var node in this.nodes) {
       if (count + node.text.length < end) {
       } else {

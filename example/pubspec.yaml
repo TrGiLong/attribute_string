@@ -1,14 +1,17 @@
-name: flutter_rich_text_editor
+name: flutter_attribute_string
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+
   flutter:
     sdk: flutter
 
-  rich_text_editor:
+  attribute_string:
     path: ../
+
+  flutter_widget_from_html: ^0.4.1
 
 dev_dependencies:
   flutter_test:
