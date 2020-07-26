@@ -7,6 +7,8 @@ class Attribute {
 
   Attribute(this.key, this.value, this.start, this.end);
 
+  Attribute copy() => Attribute(key, value, start, end);
+
   Map<String, dynamic> toJson() => {
         'key': key,
         'value': value,
@@ -40,7 +42,7 @@ class Attribute {
   }
 
   bool containRange(int start, int end) {
-    return this.start < start && end < this.end;
+    return this.start <= start && end <= this.end;
   }
 
   static const String Bold = "bold";

@@ -1,13 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:attribute_string/src/attribute_string.dart';
 import 'package:attribute_string/src/convert/text_span.dart';
+import 'package:flutter/material.dart';
 
 class AttributeStringEditingController extends TextEditingController {
-  AttributeStringEditingController() : super() {
+  AttributeStringEditingController({AttributeString attributeString})
+      : super(text: attributeString != null ? attributeString.text : null) {
+    if (attributeString != null)
+      _attributeString = attributeString;
+    else
+      _attributeString = AttributeString();
+
     this.addListener(() => this._textChanged());
   }
 
-  AttributeString _attributeString = AttributeString();
+  AttributeString _attributeString;
 
   AttributeString get attributeString => _attributeString;
 
@@ -30,6 +36,7 @@ class AttributeStringEditingController extends TextEditingController {
   }
 
   void apply(String key, value, int start, int end) {
+    if (start == end) return;
     attributeString.apply(key, value, start, end);
   }
 
@@ -37,5 +44,10 @@ class AttributeStringEditingController extends TextEditingController {
   TextSpan buildTextSpan({TextStyle style, bool withComposing}) {
     var textSpan = attributeString.toTextSpan(baseStyle: style);
     return textSpan;
+  }
+
+  void insertAttributeString(AttributeString anotherAttributeString, int at) {
+    this.attributeString.insertAttributeString(anotherAttributeString, at);
+    this.text = attributeString.text;
   }
 }

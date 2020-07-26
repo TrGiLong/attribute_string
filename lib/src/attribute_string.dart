@@ -1,6 +1,9 @@
+import 'dart:math';
+
+import 'package:attribute_string/src/attribute.dart';
+import 'package:attribute_string/src/range.dart';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:attribute_string/src/attribute.dart';
 
 class AttributeString {
   String text;
@@ -10,20 +13,22 @@ class AttributeString {
     attributes = [];
   }
 
+  int get length => this.text.length;
+
   /// Update attribute after insert a string.
-  void _insert(_Range process) {
+  void _insert(Range process) {
     attributes.forEach((attribute) {
       if (process.start <= attribute.start && attribute.start != attribute.end) {
         attribute.start += process.length;
         attribute.end += process.length;
-      } else if (attribute.start <= process.start && process.start <= attribute.end) {
+      } else if (attribute.start <= process.start && process.start < attribute.end) {
         attribute.end += process.length;
       }
     });
   }
 
   /// Update attribute after delete.
-  void _remove(_Range process) {
+  void _remove(Range process) {
     List<Attribute> removeList = [];
     attributes.forEach((attribute) {
       if (process.start <= attribute.start) {
@@ -45,9 +50,19 @@ class AttributeString {
     attributes.removeWhere((element) => removeList.contains(element));
   }
 
+  void insertAttributeString(AttributeString anotherAttributeString, int at) {
+    this.insert(anotherAttributeString.text, at);
+    for (var attribute in anotherAttributeString.attributes) {
+      this.attributes.add(attribute.copy()
+        ..start += at
+        ..end += at);
+    }
+    clear();
+  }
+
   void insert(String otherText, int at) {
     text = StringUtils.addCharAtPosition(this.text, otherText, at);
-    _insert(_Range(at, otherText.length));
+    _insert(Range(at, otherText.length));
   }
 
   void append(String text) {
@@ -55,8 +70,8 @@ class AttributeString {
   }
 
   void remove(int start, int end) {
-    text.replaceRange(start, end, "");
-    _remove(_Range(start, start - end));
+    text = text.replaceRange(start, end, "");
+    _remove(Range(end, start - end));
   }
 
   /// Add attribute to AttributeString
@@ -75,9 +90,21 @@ class AttributeString {
     clear();
   }
 
+//  void removeAttribute(String key, int start, int end) {
+//    _remove(Range(end, start - end));
+//    _insert(Range(start, end - start));
+//  }
+
   void clear() {
     List<Attribute> removeList = [];
     for (var attribute in attributes) {
+      if (attribute.start >= text.length) {
+        removeList.add(attribute);
+        continue;
+      } else if (attribute.end >= text.length) {
+        attribute.end = text.length;
+      }
+
       for (var another in attributes) {
         if (attribute == another) continue;
         if (attribute.key != another.key) continue;
@@ -87,7 +114,6 @@ class AttributeString {
         }
         if (another.start <= attribute.start && attribute.end <= another.end) {
           removeList.add(attribute);
-          print('object2');
         }
       }
     }
@@ -99,7 +125,8 @@ class AttributeString {
     return attributes.where((element) => element.start <= at && at <= element.end).toList();
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'text': text,
         'attributes': attributes,
       };
@@ -113,13 +140,20 @@ class AttributeString {
     attributes = json['value'];
     return this;
   }
-}
 
-class _Range {
-  int start;
-  int length;
+  AttributeString subAttributeString(int start, int end) {
+    var newAttributeString = AttributeString(text: this.text.substring(start, end));
 
-  _Range(this.start, this.length);
+    for (var attribute in attributes) {
+      if (attribute.isOverlapWith(start, end)) {
+        newAttributeString.addAttribute(attribute.copy()
+          ..start = (max(attribute.start, start) - start)
+          ..end = (min(attribute.end, end)) - start);
+      }
+    }
+
+    return newAttributeString;
+  }
 }
 
 extension AttributeStringEditable on AttributeString {
@@ -133,11 +167,13 @@ extension AttributeStringEditable on AttributeString {
 
     if (oldSelection.start != oldSelection.end) {
       // replace
-      _remove(_Range(oldSelection.end, oldSelection.start - oldSelection.end));
-      _insert(_Range(oldSelection.start, newSelection.start - oldSelection.start));
+      _remove(Range(oldSelection.end, oldSelection.start - oldSelection.end));
+      _insert(Range(oldSelection.start, newSelection.start - oldSelection.start));
     } else {
       // insert
-      _insert(_Range(oldSelection.start, newSelection.start - oldSelection.start));
+      _insert(Range(oldSelection.start, newSelection.start - oldSelection.start));
     }
+
+    clear();
   }
 }

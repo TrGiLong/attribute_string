@@ -9,8 +9,6 @@ typedef Transformation<T> = T Function(AttributeStringTree attributeStringData);
 class AttributeStringTreeRoot extends AttributeStringTree {
   List<AttributeStringTreeParagraph> paragraphs = [];
 
-
-  
   factory AttributeStringTreeRoot.from(AttributeString attributeString) {
     var root = AttributeStringTreeRoot(attributeString.text);
     
